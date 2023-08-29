@@ -8,7 +8,7 @@ With the management cluster with k0smotron, AWS CCM and AWS CSI EBS we are able 
 
 Prior to initiating a cluster, the configuration of the infrastructure provider is necessary. Each provider comes with its own unique set of prerequisites.
 
-> Note: The following commands are for Mac users. Please download the (fitting binary)[https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases] and make it executable if you are using Windows or Linux. 
+> Note: The following commands are for Mac users. Please download the [fitting binary](https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases) and make it executable if you are using Windows or Linux. 
 
 The AWS infrastructure provider requires the `clusterawsadm` tool to be installed:
 ``` bash

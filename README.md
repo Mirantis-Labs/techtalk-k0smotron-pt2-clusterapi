@@ -37,13 +37,13 @@ et voilà, a k0s cluster with 1 controller, 1 worker, integration into AWS and k
 
 ## AWS - Create a k0s Cluster with EC2 instances as worker nodes
 
-Please follow this (guide)[aws/guide.md] to install the ClusterAPI Controller and the AWS Infrastructure Controller into the management cluster.
+Please follow this [guide](aws/guide.md) to install the ClusterAPI Controller and the AWS Infrastructure Controller into the management cluster.
 
 Happy testing! 
 
 ## Hetzner - Create a k0s Cluster with Hetzner Cloud Machines as worker nodes
 
-Please follow this (guide)[hetzner/guide.md] to install the ClusterAPI Controller and the Hetzner Infrastructure Controller into the management cluster.
+Please follow this [guide](hetzner/guide.md) to install the ClusterAPI Controller and the Hetzner Infrastructure Controller into the management cluster.
 
 Happy testing! 
 
