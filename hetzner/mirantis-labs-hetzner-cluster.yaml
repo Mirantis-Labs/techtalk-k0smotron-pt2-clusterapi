@@ -1,0 +1,117 @@
+# vscode-kubernetes-tools:exclude
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-red
+spec: {}
+status: {}
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: mirantis-labs-hetzner
+  namespace: team-red
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: [10.244.0.0/16]
+    services:
+      cidrBlocks: [10.96.0.0/12]
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: K0smotronControlPlane
+    name: mirantis-labs-hetzner
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: HetznerCluster
+    name: mirantis-labs-hetzner
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: K0smotronControlPlane
+metadata:
+  name: mirantis-labs-hetzner
+  namespace: team-red
+spec:
+  k0sVersion: v1.27.2-k0s.0
+  persistence:
+    type: emptyDir
+  service:
+    type: LoadBalancer
+    apiPort: 6443
+    konnectivityPort: 8132
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: HetznerCluster
+metadata:
+  name: mirantis-labs-hetzner
+  namespace: team-red
+  annotations:
+    cluster.x-k8s.io/managed-by: k0smotron
+spec:
+  controlPlaneLoadBalancer:
+    enabled: false
+  controlPlaneEndpoint:
+    host: "1.2.3.4"
+    port: 6443
+  controlPlaneRegions:
+    - fsn1
+  hetznerSecretRef:
+    name: hetzner
+    key:
+      hcloudToken: hcloud
+  sshKeys:
+    hcloud:
+    - name: jhennig@mirantis.com
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: mirantis-labs-hetzner-md
+  namespace: team-red
+  labels:
+    nodepool: hetzner-worker-small
+spec:
+  clusterName: mirantis-labs-hetzner
+  replicas: 3
+  selector:
+    matchLabels: null
+  template:
+    metadata:
+      labels:
+        nodepool: hetzner-worker-small
+    spec:
+      clusterName: mirantis-labs-hetzner
+      failureDomain: fsn1
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: K0sWorkerConfigTemplate
+          name: mirantis-labs-hetzner-mc
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: HCloudMachineTemplate
+        name: mirantis-labs-hetzner-mt
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: HCloudMachineTemplate
+metadata:
+  name: mirantis-labs-hetzner-mt
+  namespace: team-red
+spec:
+  template:
+    spec:
+      imageName: ubuntu-22.04
+      type: cx21
+      sshKeys:
+        - name: jhennig@mirantis.com
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: K0sWorkerConfigTemplate
+metadata:
+  name: mirantis-labs-hetzner-mc
+  namespace: team-red
+spec:
+  template:
+    spec:
+      version: v1.27.2+k0s.0
+      # More details of the worker configuration can be set here
